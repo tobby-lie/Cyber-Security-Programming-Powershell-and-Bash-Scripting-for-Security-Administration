@@ -1,46 +1,71 @@
-﻿$shell_folders1 = Get-ItemProperty -Path "HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
+﻿# last modified @ 10/20 1:18AM
+
+$HKCU_1 = Get-ItemProperty -Path "HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+$HKLM_1 = Get-ItemProperty -Path "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
 
 $finalText1 = ""
 
-$shell_folders1_array = $Shell_folders1 -split '; '
-foreach ($shell_folder in $shell_folders1_array){
-    $temp_location = $shell_folder -split '='
-    if ($temp_location[0] -eq "Startup")
-    {
-        $contents = Get-ChildItem -Path $temp_location[1]
-        $finalText1 += $contents
-    }
+$HKCU1_array = $HKCU_1 -split '; '
+$HKLM1_array = $HKLM_1 -split '; '
+
+foreach ($HKCU in $HKCU1_array){
+    $temp_location = $HKCU -split '='
+
+    $finalText1 += $temp_location[0]
+    $finalText1 += ";"
 }
 
-"$finalText1" | Out-File shell_logs1.txt
+foreach ($HKLM in $HKLM1_array){
+    $temp_location = $HKLM -split '='
+
+    $finalText1 += $temp_location[0]
+    $finalText1 += ";"
+}
+
+$finalText1 = $finalText1 -replace '[{]',''
+$finalText1 = $finalText1 -replace '[@]', ''
+"$finalText1" | Out-File log_file1.txt
 
 # Create Timer Instance
 $timer = New-Object System.Timers.Timer
 
 # Setup the Timer instance to fire events
-# every 5 minutes = 300000 seconds
+# every 5 minutes = 300000 millseconds
 $timer.Interval = 300000
 $timeout = 0
 $global:counter = 1
+$global:finalText2 = ""
 
 $action = {
-    $shell_folders2 = Get-ItemProperty -Path "HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders"
+    $HKCU_2 = Get-ItemProperty -Path "HKCU:SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+    $HKLM_2 = Get-ItemProperty -Path "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
 
-    $finalText2 = ""
+    #$finalText2 = ""
 
-    $shell_folders2_array = $Shell_folders2 -split '; '
-    foreach ($shell_folder in $shell_folders2_array){
-        $temp_location = $shell_folder -split '='
-        if ($temp_location[0] -eq "Startup")
-        {
-            $contents = Get-ChildItem -Path $temp_location[1]
-            $finalText2 += $contents
-        }
+    $HKCU2_array = $HKCU_2 -split '; '
+    $HKLM2_array = $HKLM_2 -split '; '
+
+    foreach ($HKCU in $HKCU2_array){
+        $temp_location = $HKCU -split '='
+   
+        $global:finalText2 += $temp_location[0]
+        $global:finalText2 += ";"
     }
 
-    "$finalText2" | Out-File shell_logs2.txt
+    foreach ($HKLM in $HKLM2_array){
+        $temp_location = $HKLM -split '='
 
-    write-host "SCAN: " $counter
+        $global:finalText2 += $temp_location[0]
+        $global:finalText2 += ";"
+    }
+
+    $global:finalText2 = $global:finalText2 -replace '[{]',''
+    $global:finalText2 = $global:finalText2 -replace '[@]', ''
+    "$global:finalText2" | Out-File log_file2.txt
+
+    #write-host $global:finalText2
+
+    write-host "SCAN: " $global:counter
     $global:counter++
     }
 
@@ -58,16 +83,13 @@ while ($execute_flag -eq $true)
     Write-Host "[+]" $count "second(s)"
     if($count%300 -eq 0)
     {
-        $areEqual = {@(Compare-Object $finalText1 $finalText2 -sync 0).Length -eq 0}
-        write-host "$finalText1"
-        Write-Host "$finalText2"
-        if (Compare-Object "$finalText1" "$finalText2")
+        if ($finalText1 -eq $global:finalText2)
         {
-            Add-Content log_file.txt "A change has not occured and a program has NOT been added to start up!"
+            Add-Content compare_logFile.txt "A change has not occured and a program has NOT been added to start up!"
         }
         else
         {
-            Add-Content log_file.txt "A change has occured and a program HAS been added to start up!"
+            Add-Content compare_logFile.txt "A change has occured and at least one program HAS been added to start up!"
         }
     }
 }
