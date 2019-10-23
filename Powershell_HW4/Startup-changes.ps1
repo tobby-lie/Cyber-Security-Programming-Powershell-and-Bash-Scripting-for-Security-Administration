@@ -76,6 +76,7 @@ $timer.Start()
 $execute_flag = $true
 
 $count = 0
+$startTime = (Get-Date).Second
 while ($execute_flag -eq $true)
 {
     Start-Sleep -second 1
@@ -85,14 +86,33 @@ while ($execute_flag -eq $true)
     {
         if ($finalText1 -eq $global:finalText2)
         {
-            Add-Content compare_logFile.txt "A change has not occured and a program has NOT been added to start up!"
+            $curTime = (Get-Date).Second
+            $elapsed = ($endTime - $startTime)
+            Add-Content compare_logFile.txt "$elapsed seconds: A change has not occured and a program has NOT been added to start up!"
         }
         else
         {
-            Add-Content compare_logFile.txt "A change has occured and at least one program HAS been added to start up!"
+            $curTime = (Get-Date).Second
+            $elapsed = ($endTime - $startTime)
+            Add-Content compare_logFile.txt "$elapsed seconds: A change has occured and at least one program HAS been added to start up!"
+
+            $init_arr = "$finalText1" -split ";"
+
+            $fin_arr = "$finalText2" -split ";"
+
+            foreach($element in $fin_arr)
+            {
+                if (!$init_arr.Contains("$element"))
+                {
+                    $curTime = (Get-Date).Second
+                    $elapsed = ($endTime - $startTime)
+                    Add-Content compare_logFile.txt "$elapsed seconds: $element has been added!"
+                }
+            }
         }
     }
-}
+} 
 
 $timer.Stop()
-Unregister-Event TimerElapsed
+Unregister-Event TimerElapsed 
+

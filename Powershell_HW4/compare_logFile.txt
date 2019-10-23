@@ -1,1 +1,4 @@
-A change has occured and at least one program HAS been added to start up!
+-39 seconds: A change has occured and at least one program HAS been added to start up!
+-39 seconds: Spotify has been added!
+-39 seconds: Steam has been added!
+-39 seconds: GlobalProtect has been added!
