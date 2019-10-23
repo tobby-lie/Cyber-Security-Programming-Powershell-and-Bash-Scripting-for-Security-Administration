@@ -1,0 +1,4 @@
+300.2549808 seconds: A change has occured and at least one program HAS been added to start up!
+300.3643813 seconds: Steam has been added!
+300.3643813 seconds: Spotify has been added!
+300.3643813 seconds: GlobalProtect has been added!
