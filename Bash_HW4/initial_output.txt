@@ -1,0 +1,11 @@
+Discovered open port 445/tcp on 192.168.10.226
+Discovered open port 139/tcp on 192.168.10.226
+Discovered open port 135/tcp on 192.168.10.226
+Discovered open port 49152/tcp on 192.168.10.226
+Discovered open port 49157/tcp on 192.168.10.226
+Discovered open port 49154/tcp on 192.168.10.226
+Discovered open port 49155/tcp on 192.168.10.226
+Discovered open port 8008/tcp on 192.168.10.229
+Discovered open port 49158/tcp on 192.168.10.226
+Discovered open port 49156/tcp on 192.168.10.226
+Discovered open port 49153/tcp on 192.168.10.226
